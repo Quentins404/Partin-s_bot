@@ -41,26 +41,25 @@ async def on_ready():
     
 @client.event
 async def on_member_join(member):
-    channel = client.get_channel(1100115056110354561)
+    channel = client.get_channel(YOUR_CHANNEL_ID)
     embed=discord.Embed(title="Welcome!",description=f"{member.mention}just arrived!" , color=discord.Colour.green())
     await channel.send(embed=embed)
 
 @client.tree.command(name="connect")
 async def connect(interaction: discord.Interaction):
-        embed=discord.Embed(title="**To connect on the server you need to**",description="Start Minecraft \n \n Click on ```Multiplayer```  \n Then on ```Add server``` \n Then paste ```72.99.189.25:24200``` \n  in ""server adress"" \n \n  then , click on done \n \n Finally double-click on the server to join it" ,color=discord.Colour.blue())
+        embed=discord.Embed(title="**To connect on the server you need to**",description="Start Minecraft \n \n Click on ```Multiplayer```  \n Then on ```Add server``` \n Then paste ```YOUR_SERVER_IP``` \n  in ""server adress"" \n \n  then , click on done \n \n Finally double-click on the server to join it" ,color=discord.Colour.blue())
         await interaction.response.send_message(embed=embed)
 
-@client.tree.command(name="help")
+@client.tree.command(name="help" , description="Gives ypou all the commands")
 async def help(interaction: discord.Interaction):
-     embed=discord.Embed(title="**Commands list**",description="/status \n \n /help \n \n /commands" , color=discord.Colour.yellow())
+     embed=discord.Embed(title="**Commands list**",description="/status \n \n /help \n \n /commands \n \n /version \n \n /ping " , color=discord.Colour.yellow())
      await interaction.response.send_message(embed=embed)
-     await defer(ephemeral=False, thinking=False)
 
-#@client.tree.command(name="ping")
-#async def ping(interaction: discord.Interaction): 
-#ajouter une slash commande ping
+@client.tree.command(name="ping" , description="Replies with a Pong!")
+async def ping(interaction: discord.Interaction):
+    await interaction.response.send_message(f"Pong! {round(client.latency * 1000)}ms")
 
-@client.tree.command(name="version")
+@client.tree.command(name="version" , description="Gives you the version of the bot")
 async def version(interaction: discord.Interaction):
      embed=discord.Embed(title="Version of the bot" , description="Bot version: V.1.10 \n Python version: 3.11.4" , color=discord.Colour.dark_purple())
      await interaction.response.send_message(embed=embed)
@@ -71,9 +70,9 @@ async def version(interaction: discord.Interaction):
 @client.tree.command(name="commands")
 async def commands(interaction: discord.Interaction):
      embed=discord.Embed(title="IG-Commands", description="/sethome homename (sets an home) \n \n /home homename (teleports you to your home) \n \n /hub (teleports you to the hub)")
+     await interaction.response.send_message(embed=embed)
 
-
-@client.tree.command(name="status")
+@client.tree.command(name="status", description="gives you the status of the server")
 async def status(interaction: discord.Interaction):
         embed=discord.Embed(title="**I'm checking the status...**",description="The server is ON :green_square: \n \n To connect , just go on the #How-to-connect channel." , color=discord.Colour.green())
         await interaction.response.send_message(embed=embed)
