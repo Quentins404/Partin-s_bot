@@ -66,6 +66,14 @@ async def version(interaction: discord.Interaction):
      await defer(ephemeral=False , thinking=False)
 
 
+@client.tree.command(name="youtube" , description="gives you the link")
+async def status(interaction: discord.Interaction):
+     embed=discord.Embed(title="Owners Channels links",description="**Quentin's:** https://www.youtube.com/channel/UClKOEpqCOlIFmK6rzht9uKg \n \n **Par:** https://www.youtube.com/channel/UChZss9UUr9webpB2hcrs4gg" , color=discord.Colour.red())
+     await interaction.response.send_message(embed=embed)
+
+
+
+
 
 @client.tree.command(name="commands")
 async def commands(interaction: discord.Interaction):
