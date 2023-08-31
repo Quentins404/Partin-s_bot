@@ -85,6 +85,7 @@ async def on_message(ctx):
     print(f"{ctx.channel}: {ctx.author}: {ctx.author.name}: {ctx.content}")
     if any(x in ctx.content for x in BlockedWords):
         await ctx.delete()
+        
 client.run(discord_token)
 
 
