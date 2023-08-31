@@ -16,14 +16,15 @@ from dotenv import load_dotenv
 load_dotenv()
 # Load .env variables
 discord_token = os.getenv('TOKEN')
+discord_channel = os.getenv('CHANNEL')
 intents = discord.Intents.all()
 intents.message_content = True
 client = commands.Bot(command_prefix="/", intents=discord.Intents.all())
 
+# Events
 @client.event
 async def on_message(message):
     print("{} in {}: {}".format(str(message.author), message.guild.name, message.content))
-
 @client.event
 async def on_ready():
     # this runs when the account is logged into
@@ -33,12 +34,12 @@ async def on_ready():
         print(f"Synced {len(synced)} commands(s)")
     except Exception as e:
         print(e)    
-
 @client.event
 async def on_member_join(member):
-    channel = client.get_channel('1035939235544436755')
+    channel = client.get_channel(discord_channel)
     embed=discord.Embed(title="Welcome!",description=f"{member.mention}just arrived!" , color=discord.Colour.green())
     await channel.send(embed=embed)
+
 # Commands 
 @client.tree.command(name="connect")
 async def connect(interaction: discord.Interaction):
@@ -65,7 +66,7 @@ async def status(interaction: discord.Interaction):
         embed=discord.Embed(title="**I'm checking the status...**",description="The server is ON :green_square: \n \n To connect , just go on the #How-to-connect channel." , color=discord.Colour.green())
         await interaction.response.send_message(embed=embed)
         await defer(ephemeral=False, thinking=False)
-#
+# Don't forget to add role to your server
 @client.tree.command(name="muted", description="add role 'mute' to someone")
 async def mute(ctx, member: discord.Member):
         # Rôle "Muted"
@@ -79,11 +80,9 @@ async def mute(ctx, member: discord.Member):
         await member.add_roles(muted_role)
         print((f"{member.mention} a été muté."))
 # TODO Add a "unmute" command
-
 @client.event
 async def on_message(ctx):
     print(f"{ctx.channel}: {ctx.author}: {ctx.author.name}: {ctx.content}")
     if any(x in ctx.content for x in BlockedWords):
         await ctx.delete()
-        
 client.run(discord_token)
