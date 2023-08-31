@@ -99,9 +99,7 @@ async def mute(ctx, member: discord.Member):
             await muted_role.edit(permissions=permissions)
         # Add "Muted" to member
         await member.add_roles(muted_role)
-        print((f"{member.mention} a été muté."))
-        channel = client.get_channel(discord_channel)
-        await channel.send("User Muted")
+        print((f"{member.mention} a été muté.")
 
 
 # TODO Add a "unmute" command , Find a way to make the bot send a message when the command is send.
