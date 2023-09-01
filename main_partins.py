@@ -13,9 +13,13 @@ from blockedWords import BlockedWords
 from token_1 import TOKEN
 from dotenv import load_dotenv
 import re
+import pyrandmeme
+from pyrandmeme import *
+import requests
+from api_key import API_KEY
 
-
-CHANNEL = YOUR_CHANNEL_ID
+api_key = API_KEY
+base_url = "http://api.openweathermap.org/data/2.5/weather?"
 
 
 #Load .env file
@@ -31,7 +35,8 @@ client = commands.Bot(command_prefix="/", intents=discord.Intents.all())
 # Events
 @client.event
 async def on_message(message):
-    print("{} in {}: {}".format(str(message.author), message.guild.name, message.content))
+    print(f"{str(message.author)} in {message.guild.name}: {message.content}")
+
 @client.event
 async def on_ready():
     # this runs when the account is logged into
@@ -41,6 +46,7 @@ async def on_ready():
         print(f"Synced {len(synced)} commands(s)")
     except Exception as e:
         print(e)    
+
 @client.event
 async def on_member_join(member):
     channel = client.get_channel(discord_channel)
@@ -56,7 +62,7 @@ async def connect(interaction: discord.Interaction):
 
 @client.tree.command(name="help" , description="Gives ypou all the commands")
 async def help(interaction: discord.Interaction):
-    embed=discord.Embed(title="**Commands list**",description="/status \n \n /help \n \n /commands \n \n /version \n \n /ping " , color=discord.Colour.yellow())
+    embed=discord.Embed(title="**Commands list**",description="/status \n \n /help \n \n /commands \n \n /version \n \n /ping \n \n /random \n \n /express_rage \n \n /meme  " , color=discord.Colour.yellow())
     await interaction.response.send_message(embed=embed)
 
 
@@ -67,14 +73,23 @@ async def ping(interaction: discord.Interaction):
 
 @client.tree.command(name="version" , description="Gives you the version of the bot")
 async def version(interaction: discord.Interaction):
-    embed=discord.Embed(title="Version of the bot" , description="Bot version: V.1.10 \n Python version: 3.11.4" , color=discord.Colour.dark_purple())
+    embed=discord.Embed(title="Version of the bot" , description="Bot version: V.1.10 \n Python version: 3.11.4 " , color=discord.Colour.dark_purple())
+    embed.set_image(url="https://i.ibb.co/T2KvY7w/t-l-chargement.png")
     await interaction.response.send_message(embed=embed)
-    await defer(ephemeral=False , thinking=False)
+
+
+
+
+
+@client.tree.command(name="test" , description="DO NOT USE OR YOU WILL GET BANNED")
+async def test(interaction: discord.Interaction):
+   await interaction.response.send_message("https://tenor.com/view/python-powered-logo-programming-language-gif-16957606")
 
 
 @client.tree.command(name="commands")
 async def commands(interaction: discord.Interaction):
     embed=discord.Embed(title="IG-Commands", description="/sethome homename (sets an home) \n \n /home homename (teleports you to your home) \n \n /hub (teleports you to the hub)")
+    await interaction.response.defer()
     await interaction.response.send_message(embed=embed)
 
 
@@ -85,7 +100,6 @@ async def status(interaction: discord.Interaction):
         await defer(ephemeral=False, thinking=False)
 
 
-# Don't forget to add role to your server
 
 
 @client.tree.command(name="mute", description="add role 'mute' to someone")
@@ -99,10 +113,21 @@ async def mute(ctx, member: discord.Member):
             await muted_role.edit(permissions=permissions)
         # Add "Muted" to member
         await member.add_roles(muted_role)
-        print((f"{member.mention} a été muté.")
+        print((f"{member.mention} Has been Muted."))
 
 
-# TODO Add a "unmute" command , Find a way to make the bot send a message when the command is send.
+# TODO Find a way to make the bot send a message when the command is send.
+
+@client.tree.command(name="unmute", description="Unmute someone")
+async def unmute(ctx, member: discord.Member):
+        # Rôle "Muted" check
+        unmuted_role = discord.utils.get(ctx.guild.roles, name="Muted")
+            # Apply Restriction    
+        permissions = discord.Permissions(send_messages=True, speak=True)    
+        await unmuted_role.edit(permissions=permissions)
+        # Remove "Muted" to member
+        await member.remove_roles(unmuted_role)
+        print((f"{member.mention} Has been Unmuted."))
 
 
 @client.event
@@ -112,17 +137,35 @@ async def on_message(ctx):
         await ctx.delete()
 
 
-#Makes the bot respond to a hello message where he is mentioned.
+#Makes the bot respond to a message where he is mentioned.
 
 @client.event
 async def on_message(message):
     if message.author == client.user:
         return
   
-    pattern = re.compile(f"hello <@!?{client.user.id}>") # The exclamation mark is optional
+    pattern = re.compile(f"<@!?{client.user.id}>") # The exclamation mark is optional
 
     if pattern.match(message.content.lower()) is not None: # Checking whether the message matches our pattern
-        await message.channel.send(f"Hello {message.author.mention}!")
+        await message.channel.send(f"**I am going to implode.** {message.author.mention}" , reference=message) 
+
+        
+
+@client.tree.command(name="random" , description="Gives you a random number beetween 1 and 1000000")
+async def random(interaction: discord.Interaction):
+    import random
+    await interaction.response.send_message(random.randint(0, 1000000))
+
+@client.tree.command(name="express_rage" , description="EXPRESS YOUR RAGE")
+async def express_rage(interaction: discord.Interaction):
+    await interaction.response.send_message("**I am going to implode.**")
+
+
+@client.tree.command(name="meme" , description="Send a random meme")
+async def meme(interaction:discord.Interaction):
+    await interaction.response.send_message(embed=await pyrandmeme())
+
+
 
 
 client.run(TOKEN)
