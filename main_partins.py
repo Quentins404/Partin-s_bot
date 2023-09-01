@@ -75,17 +75,9 @@ async def version(interaction: discord.Interaction):
 
 
 
-
-
-@client.tree.command(name="test" , description="DO NOT USE OR YOU WILL GET BANNED")
-async def test(interaction: discord.Interaction):
-   await interaction.response.send_message("https://tenor.com/view/python-powered-logo-programming-language-gif-16957606")
-
-
 @client.tree.command(name="commands")
 async def commands(interaction: discord.Interaction):
-    embed=discord.Embed(title="IG-Commands", description="/sethome homename (sets an home) \n \n /home homename (teleports you to your home) \n \n /hub (teleports you to the hub)")
-    await interaction.response.defer()
+    embed=discord.Embed(title="IG-Commands", description="/sethome homename (sets an home) \n \n /home homename (teleports you to your home) \n \n /homes (List all of your homes) \n \n /spawn (teleports you to the hub)" , color=discord.Colour.dark_orange())
     await interaction.response.send_message(embed=embed)
 
 
