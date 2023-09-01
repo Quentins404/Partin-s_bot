@@ -16,6 +16,10 @@ import re
 import pyrandmeme
 from pyrandmeme import *
 import requests
+from api_key import API_KEY
+
+api_key = API_KEY
+base_url = "http://api.openweathermap.org/data/2.5/weather?"
 
 
 #Load .env file
@@ -100,19 +104,22 @@ async def status(interaction: discord.Interaction):
 
 @client.tree.command(name="mute", description="add role 'mute' to someone")
 async def mute(ctx, member: discord.Member):
-        # Rôle "Muted"
-        muted_role = discord.utils.get(ctx.guild.roles, name="Muted")
-        if not muted_role:
-            muted_role = await ctx.guild.create_role(name="Muted")
-            # Apply Restriction
-            permissions = discord.Permissions(send_messages=False, speak=False)
-            await muted_role.edit(permissions=permissions)
-        # Add "Muted" to member
-        await member.add_roles(muted_role)
-        print((f"{member.mention} Has been Muted."))
+    # Rôle "Muted"
+    muted_role = discord.utils.get(ctx.guild.roles, name="Muted")
+    if not muted_role:
+        muted_role = await ctx.guild.create_role(name="Muted")
+        # Apply Restriction
+        permissions = discord.Permissions(send_messages=False, speak=False)
+        await muted_role.edit(permissions=permissions)
+    # Add "Muted" to member
+    await member.add_roles(muted_role)
+    print((f"{member.mention} Has been Muted."))
+    discord_channel=YOUR_CHANNEL_ID
+    channel = client.get_channel(discord_channel)
+    await channel.send("User Muted :white_check_mark:")
 
 
-# TODO Find a way to make the bot send a message when the command is send.
+# TODO 
 
 @client.tree.command(name="unmute", description="Unmute someone")
 async def unmute(ctx, member: discord.Member):
@@ -124,7 +131,9 @@ async def unmute(ctx, member: discord.Member):
         # Remove "Muted" to member
         await member.remove_roles(unmuted_role)
         print((f"{member.mention} Has been Unmuted."))
-
+        discord_channel=YOUR_CHANNEL_ID
+        channel = client.get_channel(discord_channel)
+        await channel.send("User Unmuted :white_check_mark:")
 
 @client.event
 async def on_message(ctx):
@@ -133,7 +142,7 @@ async def on_message(ctx):
         await ctx.delete()
 
 
-#Makes the bot respond to a message where he is mentioned.
+#Makes the bot respond to a hello message where he is mentioned.
 
 @client.event
 async def on_message(message):
