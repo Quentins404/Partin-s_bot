@@ -16,10 +16,6 @@ import re
 import pyrandmeme
 from pyrandmeme import *
 import requests
-from api_key import API_KEY
-
-api_key = API_KEY
-base_url = "http://api.openweathermap.org/data/2.5/weather?"
 
 
 #Load .env file
@@ -101,39 +97,65 @@ async def status(interaction: discord.Interaction):
 
 
 
-
+#mute command
 @client.tree.command(name="mute", description="add role 'mute' to someone")
-async def mute(ctx, member: discord.Member):
-    # Rôle "Muted"
-    muted_role = discord.utils.get(ctx.guild.roles, name="Muted")
+async def mute(interaction: discord.Interaction, member: discord.Member):
+    # Role "Muted"
+    muted_role = discord.utils.get(interaction.guild.roles, name="Muted")
+    newbie = discord.utils.get(interaction.guild.roles, name="Newbie")
     if not muted_role:
-        muted_role = await ctx.guild.create_role(name="Muted")
-        # Apply Restriction
-        permissions = discord.Permissions(send_messages=False, speak=False)
-        await muted_role.edit(permissions=permissions)
-    # Add "Muted" to member
+        # Create the "Muted" role with necessary permissions
+        muted_role = await interaction.guild.create_role(name="Muted", permissions=discord.Permissions(send_messages=False, speak=False))
+
+        # Apply the "Muted" role to the default text channels (optional)
+        for channel in interaction.guild.text_channels:
+            await channel.set_permissions(muted_role, send_messages=False)
+
+    # Add the "Muted" role to the member
     await member.add_roles(muted_role)
-    print((f"{member.mention} Has been Muted."))
-    discord_channel=YOUR_CHANNEL_ID
-    channel = client.get_channel(discord_channel)
-    await channel.send("User Muted :white_check_mark:")
+    print(f"{member.mention} has been muted.")
+
+    # Send a DM to the muted user
+    embed = discord.Embed(title="You have been Muted", description="You have been muted in the server.")
+    await interaction.user.send(embed=embed)
+
+    # Send a message using interaction response
+    response_embed = discord.Embed(title="User Muted", description=f"{member.mention} has been muted :white_check_mark:" , color=discord.Colour.red())
+    await interaction.response.send_message(embed=response_embed)
+
+    # Remove the "Newbie" role (optional)
+    await member.remove_roles(newbie)
 
 
 # TODO 
-
+#unmute command
 @client.tree.command(name="unmute", description="Unmute someone")
-async def unmute(ctx, member: discord.Member):
-        # Rôle "Muted" check
-        unmuted_role = discord.utils.get(ctx.guild.roles, name="Muted")
-            # Apply Restriction    
-        permissions = discord.Permissions(send_messages=True, speak=True)    
-        await unmuted_role.edit(permissions=permissions)
-        # Remove "Muted" to member
-        await member.remove_roles(unmuted_role)
-        print((f"{member.mention} Has been Unmuted."))
-        discord_channel=YOUR_CHANNEL_ID
-        channel = client.get_channel(discord_channel)
-        await channel.send("User Unmuted :white_check_mark:")
+async def mute(interaction: discord.Interaction, member: discord.Member):
+    # Role "Muted"
+    muted_role = discord.utils.get(interaction.guild.roles, name="Muted")
+    newbie = discord.utils.get(interaction.guild.roles, name="Newbie")
+    if not muted_role:
+        # Create the "Muted" role with necessary permissions
+        muted_role = await interaction.guild.create_role(name="Muted", permissions=discord.Permissions(send_messages=False, speak=False))
+
+        # Apply the "Muted" role to the default text channels (optional)
+        for channel in interaction.guild.text_channels:
+            await channel.set_permissions(muted_role, send_messages=False)
+
+    # Add the "Muted" role to the member
+    await member.remove_roles(muted_role)
+    print(f"{member.mention} has been unmuted.")
+
+    # Send a DM to the muted user
+    embed = discord.Embed(title="You have been unmuted", description="You have been Unmuted in the server.")
+    await interaction.user.send(embed=embed)
+
+    # Send a message using interaction response
+    response_embed = discord.Embed(title="User Unmuted", description=f"{member.mention} has been Unmuted :white_check_mark:" , color=discord.Colour.green())
+    await interaction.response.send_message(embed=response_embed)
+
+    # Remove the "Newbie" role (optional)
+    await member.add_roles(newbie)
 
 @client.event
 async def on_message(ctx):
