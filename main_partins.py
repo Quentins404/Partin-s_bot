@@ -16,10 +16,6 @@ import re
 import pyrandmeme
 from pyrandmeme import *
 import requests
-from api_key import API_KEY
-
-api_key = API_KEY
-base_url = "http://api.openweathermap.org/data/2.5/weather?"
 
 
 #Load .env file
