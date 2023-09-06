@@ -187,7 +187,7 @@ async def random(interaction: discord.Interaction):
 
 @client.tree.command(name="express_rage" , description="EXPRESS YOUR RAGE")
 async def express_rage(interaction: discord.Interaction):
-    await interaction.response.send_message("**I am going to implode.**")
+    await interaction.response.send_message(view=MyView3())
 
 
 @client.tree.command(name="meme" , description="Send a random meme")
@@ -198,6 +198,22 @@ async def meme(interaction:discord.Interaction):
 async def rules(interaction:discord.Interaction):
     embed=discord.Embed(title="Rules", description="https://docs.google.com/document/d/14fmVt4_eU3QesQVC8VfkSKL0i4EB5hQVI1c3RRCUUOE/edit?usp=sharing" , color=discord.Colour.dark_blue())
     await interaction.response.send_message(embed=embed)
+
+@client.tree.command(name="clear",description="Delete Messages automatically from the current channel")
+async def clear(bot, number:int, member:discord.Member = None):
+  channel = bot.channel
+  if number > 50:
+    number = 50
+  def check_(m):
+    return m.author == member
+  if not member:
+    await channel.purge(limit=number)
+  else:
+    await channel.purge(limit=number,check=check_)
+  await bot.response.send_message(f"**{number}** message(s) deleted")
+
+
+
 
 #buttons
 
@@ -212,6 +228,12 @@ class MyView2(discord.ui.View): # Create a class called MyView that subclasses d
         await interaction.response.send_message(f"Pong! {round(client.latency * 1000)}ms") # Send a message when the button is clicked
 
 
+class MyView3(discord.ui.View): # Create a class called MyView that subclasses discord.ui.View
+    @discord.ui.button(label="Click me to EXPRESS YOUR RAGE", style=discord.ButtonStyle.danger) # Create a button with the label "😎 Click me!" with color Blurple
+    async def button_callback(self , interaction , button):
+        button.label = "No more pressing!" # change the button's label to something else
+        button.disabled = True # set button.disabled to True to disable the button
+        await interaction.response.send_message("**I am going to implode.**") # Send a message when the button is clicked
 
 
 
