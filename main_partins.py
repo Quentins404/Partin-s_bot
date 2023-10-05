@@ -3,14 +3,18 @@ import random
 import colorsys
 import discord
 import defer
+import datetime
+from datetime import timedelta
+from datetime import datetime
 from discord import app_commands
 from discord import embeds
 from discord import colour
 from discord import *
+from discord import ui
 from discord.ext import *
 from discord.ext import commands, tasks
 from discord import Client, Intents
-from blockedWords import blockedWords
+from blockedWords import BlockedWords
 import os
 import time
 from token_1 import TOKEN
@@ -18,6 +22,7 @@ import pyrandmeme
 from pyrandmeme import *
 import requests
 import re
+import traceback
 
 
 
@@ -45,16 +50,11 @@ async def on_ready():
 #join message
 @client.listen('on_member_join')
 async def f3(member):
-    channel = client.get_channel(1139570392973975553)
+    channel = client.get_channel(YOUR_CHANNEL_ID)
     embed=discord.Embed(title="Welcome!",description=f"{member.mention}just arrived!" , color=discord.Colour.green())
     await channel.send(embed=embed)
 
 # Commands 
-@client.tree.command(name="connect")
-async def connect(interaction: discord.Interaction):
-    embed=discord.Embed(title="**To connect on the server you need to**",description="Start Minecraft \n \n Click on ```Multiplayer```  \n Then on ```Add server``` \n Then paste ``` 172.99.189.127:35600``` \n  in ""server adress"" \n \n  then , click on done \n \n Finally double-click on the server to join it" ,color=discord.Colour.blue())
-    await interaction.response.send_message(embed=embed)
-
 
 @client.tree.command(name="help" , description="Gives ypou all the commands")
 async def help(interaction: discord.Interaction):
@@ -69,21 +69,16 @@ async def ping(interaction: discord.Interaction):
 
 @client.tree.command(name="version" , description="Gives you the version of the bot")
 async def version(interaction: discord.Interaction):
-    embed=discord.Embed(title="Version of the bot" , description="Bot version: V.1.10 \n Python version: 3.11.4 " , color=discord.Colour.dark_purple())
+    embed=discord.Embed(title="Version of the bot" , description="Bot version:YOUR_VERSION \n Python version: 3.11.4 " , color=discord.Colour.dark_purple())
     embed.set_image(url="https://i.ibb.co/T2KvY7w/t-l-chargement.png")
     await interaction.response.send_message(embed=embed)
 
 
 
-@client.tree.command(name="commands")
-async def commands(interaction: discord.Interaction):
-    embed=discord.Embed(title="IG-Commands", description="/sethome homename (sets an home) \n \n /home homename (teleports you to your home) \n \n /homes (List all of your homes) \n \n /spawn (teleports you to the hub)" , color=discord.Colour.dark_orange())
-    await interaction.response.send_message(embed=embed)
-
 
 @client.tree.command(name="status", description="gives you the status of the server")
 async def status(interaction: discord.Interaction):
-        embed=discord.Embed(title="**I'm checking the status...**",description="The server is ON :green_square: \n \n To connect , just go on the #How-to-connect channel." , color=discord.Colour.green())
+        embed=discord.Embed(title="**I'm checking the status...**",description="The server is ON :green_square:." , color=discord.Colour.green())
         await interaction.response.send_message(embed=embed)
         await defer(ephemeral=False, thinking=False)
 
@@ -160,9 +155,9 @@ async def mute2(interaction:discord.Interaction, member:discord.Member):
 
 @client.listen('on_message')
 async def f2(message:discord.Message): 
-    if any(x in message.content for x in blockedWords):
-        await message.delete()
-    client.process_commands(message)
+    if any(x in message.content for x in BlockedWords):
+        await message.delete() 
+    await client.process_commands(message)
 
 @client.listen('on_message')
 async def f1(message:discord.Message):
@@ -176,14 +171,12 @@ async def f1(message:discord.Message):
 
 
 
-
-
 #commands
 
 @client.tree.command(name="random" , description="Gives you a random number beetween 1 and 1000000")
 async def random(interaction: discord.Interaction):
     import random
-    await interaction.response.send_message(view=MyView2())
+    await interaction.response.send_message(random.randint(0, 1000000))
 
 @client.tree.command(name="express_rage" , description="EXPRESS YOUR RAGE")
 async def express_rage(interaction: discord.Interaction):
@@ -194,10 +187,7 @@ async def express_rage(interaction: discord.Interaction):
 async def meme(interaction:discord.Interaction):
     await interaction.response.send_message(view=MyView())
 
-@client.tree.command(name="rules")
-async def rules(interaction:discord.Interaction):
-    embed=discord.Embed(title="Rules", description="https://docs.google.com/document/d/14fmVt4_eU3QesQVC8VfkSKL0i4EB5hQVI1c3RRCUUOE/edit?usp=sharing" , color=discord.Colour.dark_blue())
-    await interaction.response.send_message(embed=embed)
+
 
 @client.tree.command(name="clear",description="Delete Messages automatically from the current channel")
 async def clear(bot, number:int, member:discord.Member = None):
@@ -210,7 +200,8 @@ async def clear(bot, number:int, member:discord.Member = None):
     await channel.purge(limit=number)
   else:
     await channel.purge(limit=number,check=check_)
-  await bot.response.send_message(f"**{number}** message(s) deleted")
+  await bot.response.send_message(f"{number} message(s) deleted")
+
 
 
 
@@ -234,8 +225,6 @@ class MyView3(discord.ui.View): # Create a class called MyView that subclasses d
         button.label = "No more pressing!" # change the button's label to something else
         button.disabled = True # set button.disabled to True to disable the button
         await interaction.response.send_message("**I am going to implode.**") # Send a message when the button is clicked
-
-
 
 #TOKEN
 
