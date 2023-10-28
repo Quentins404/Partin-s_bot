@@ -23,8 +23,21 @@ from pyrandmeme import *
 import requests
 import re
 import traceback
+import discord_webhook
+from discord_webhook import DiscordWebhook
+from discord_webhook import DiscordWebhook, DiscordEmbed
+from discord import Webhook
+import aiohttp
 
+webhook = DiscordWebhook(url="https://discord.com/api/webhooks/1164254536370753617/H_DRo-v8dOasB-jbTwFpHLNTnSXlknrHiOVQ7cK2Q7l7bxialucxId_Teu7DRjIMix4r")
 
+# create embed object for webhook
+# you can set the color as a decimal (color=242424) or hex (color="03b2f8") number
+embed = DiscordEmbed(title="Bot Status", description="The bot is on", color="86FF33")
+
+# add embed object to webhook
+webhook.add_embed(embed)
+response = webhook.execute()
 
 
 #Bot Setup
@@ -47,10 +60,16 @@ async def on_ready():
         print(e)    
 
 
+
+async def foo():
+    async with aiohttp.ClientSession() as session:
+        webhook = Webhook.from_url('https://discord.com/api/webhooks/1163207286265757746/_lMMvWZk0oElY9zvjgZAgQnZa2JaekN5VdqSt6527OU_32PpMtH9ttGts3kHcm1cx1el', session=session)
+        await webhook.send(content='Hello World', username='Foo')
+
 #join message
 @client.listen('on_member_join')
 async def f3(member):
-    channel = client.get_channel(YOUR_CHANNEL_ID)
+    channel = client.get_channel(1154470707032494142)
     embed=discord.Embed(title="Welcome!",description=f"{member.mention}just arrived!" , color=discord.Colour.green())
     await channel.send(embed=embed)
 
@@ -58,7 +77,7 @@ async def f3(member):
 
 @client.tree.command(name="help" , description="Gives ypou all the commands")
 async def help(interaction: discord.Interaction):
-    embed=discord.Embed(title="**Commands list**",description="/status \n \n /help \n \n /commands \n \n /version \n \n /ping \n \n /random \n \n /express_rage \n \n /meme  " , color=discord.Colour.yellow())
+    embed=discord.Embed(title="**Commands list**",description="/status \n \n /youtube \n \n /help \n \n /commands \n \n /version \n \n /ping \n \n /random \n \n /express_rage \n \n /meme  " , color=discord.Colour.yellow())
     await interaction.response.send_message(embed=embed)
 
 
@@ -67,82 +86,25 @@ async def ping(interaction: discord.Interaction):
     await interaction.response.send_message(view=MyView2())
 
 
+
 @client.tree.command(name="version" , description="Gives you the version of the bot")
 async def version(interaction: discord.Interaction):
-    embed=discord.Embed(title="Version of the bot" , description="Bot version:YOUR_VERSION \n Python version: 3.11.4 " , color=discord.Colour.dark_purple())
+    embed=discord.Embed(title="Version of the bot" , description="Bot version: V.1.20 \n Python version: 3.11.4 " , color=discord.Colour.dark_purple())
     embed.set_image(url="https://i.ibb.co/T2KvY7w/t-l-chargement.png")
     await interaction.response.send_message(embed=embed)
 
+@client.tree.command(name="youtube" , description="Gives you info about the owners youtube channels ")
+async def youtube(interaction: discord.Interaction):
+    embed=discord.Embed(title="Youtube channels" , description="Quentin's : https://www.youtube.com/@Quentins_dev \n \n Par : https://www.youtube.com/@parYTGshorts " , color=discord.Colour.red())
+    await interaction.response.send_message(embed=embed)
 
 
 
 @client.tree.command(name="status", description="gives you the status of the server")
 async def status(interaction: discord.Interaction):
-        embed=discord.Embed(title="**I'm checking the status...**",description="The server is ON :green_square:." , color=discord.Colour.green())
+        embed=discord.Embed(title="**I'm checking the status...**",description="The server is ON :green_square: \n \n To connect , just go on the #How-to-connect channel." , color=discord.Colour.green())
         await interaction.response.send_message(embed=embed)
         await defer(ephemeral=False, thinking=False)
-
-
-
-#mute command
-@client.tree.command(name="mute", description="add role 'mute' to someone")
-async def mute(interaction: discord.Interaction, member: discord.Member):
-    # Role "Muted"
-    muted_role = discord.utils.get(interaction.guild.roles, name="Muted")
-    newbie = discord.utils.get(interaction.guild.roles, name="Newbie")
-    if not muted_role:
-        # Create the "Muted" role with necessary permissions
-        muted_role = await interaction.guild.create_role(name="Muted", permissions=discord.Permissions(send_messages=False, speak=False))
-
-        # Apply the "Muted" role to the default text channels (optional)
-        for channel in interaction.guild.text_channels:
-            await channel.set_permissions(muted_role, send_messages=False)
-
-    # Add the "Muted" role to the member
-    await member.add_roles(muted_role)
-    print(f"{member.mention} has been muted.")
-
-    # Send a DM to the muted user
-    embed = discord.Embed(title="You have been Muted", description="You have been muted in the server.")
-    await member.send(embed=embed)
-
-    # Send a message using interaction response
-    response_embed = discord.Embed(title="User Muted", description=f"{member.mention} has been muted :white_check_mark:" , color=discord.Colour.red())
-    await interaction.response.send_message(embed=response_embed)
-
-    # Remove the "Newbie" role (optional)
-    await member.remove_roles(newbie)
-
-
-# TODO 
-#unmute command
-@client.tree.command(name="unmute", description="Unmute someone")
-async def mute(interaction: discord.Interaction, member: discord.Member):
-    # Role "Muted"
-    muted_role = discord.utils.get(interaction.guild.roles, name="Muted")
-    newbie = discord.utils.get(interaction.guild.roles, name="Newbie")
-    if not muted_role:
-        # Create the "Muted" role with necessary permissions
-        muted_role = await interaction.guild.create_role(name="Muted", permissions=discord.Permissions(send_messages=False, speak=False))
-
-        # Apply the "unMuted" role to the default text channels (optional)
-        for channel in interaction.guild.text_channels:
-            await channel.set_permissions(muted_role, send_messages=False)
-
-    # Add the "unMuted" role to the member
-    await member.remove_roles(muted_role)
-    print(f"{member.mention} has been unmuted.")
-
-    # Send a DM to the unmuted user
-    embed = discord.Embed(title="You have been unmuted", description="You have been Unmuted in the server.")
-    await member.send(embed=embed)
-
-    # Send a message using interaction response
-    response_embed = discord.Embed(title="User Unmuted", description=f"{member.mention} has been Unmuted :white_check_mark:" , color=discord.Colour.green())
-    await interaction.response.send_message(embed=response_embed)
-
-    # Remove the "Newbie" role (optional)
-    await member.add_roles(newbie)
 
 
 @client.tree.context_menu(name="vocalmute")
@@ -200,8 +162,7 @@ async def clear(bot, number:int, member:discord.Member = None):
     await channel.purge(limit=number)
   else:
     await channel.purge(limit=number,check=check_)
-  await bot.response.send_message(f"{number} message(s) deleted")
-
+  await client.response.send_message(f"{number} message(s) deleted")
 
 
 
