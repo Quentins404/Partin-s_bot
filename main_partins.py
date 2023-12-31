@@ -152,8 +152,8 @@ async def meme(interaction:discord.Interaction):
 
 
 @client.tree.command(name="clear",description="Delete Messages automatically from the current channel")
-async def clear(bot, number:int, member:discord.Member = None):
-  channel = bot.channel
+async def clear(client, number:int, member:discord.Member = None):
+  channel = client.channel
   if number > 50:
     number = 50
   def check_(m):
